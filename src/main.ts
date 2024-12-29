@@ -1,24 +1,38 @@
-import './style.css'
-import typescriptLogo from './typescript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.ts'
+import Vue from 'vue'
+import App from './views/App.vue'
+import { renderWithQiankun, qiankunWindow, QiankunProps } from 'vite-plugin-qiankun/dist/helper';
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`
+// Vue.config.productionTip = false
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+const render = (props: QiankunProps) => {
+  new Vue({
+    render: h => h(App),
+  }).$mount('#app')
+}
+
+
+// some code
+renderWithQiankun({
+  mount(props) {
+    console.log('mount');
+    render(props);
+  },
+  bootstrap() {
+    console.log('bootstrap');
+  },
+  unmount(props: any) {
+    console.log('unmount');
+    const { container } = props;
+    const mountRoot = container?.querySelector('#root');
+    // ReactDOM.unmountComponentAtNode(
+    //   mountRoot || document.querySelector('#root')
+    // );
+  },
+  update: function (props: QiankunProps): void | Promise<void> {
+    throw new Error('Function not implemented.');
+  }
+});
+
+if (!qiankunWindow.__POWERED_BY_QIANKUN__) {
+  render({});
+}
